@@ -2,6 +2,8 @@ import React from "react";
 import { Omit } from "../util/omit";
 import { splitItems, computeOriginalIndex, computeOriginalIndexAfterDrop } from "./compute";
 
+export type ItemData = object | string | number;
+
 interface Location {
   id: string;
   index: number;
@@ -14,7 +16,7 @@ export interface DragAndDropResult {
 
 export interface Chunk {
   id: string;
-  items: any[];
+  items: ItemData[];
 }
 
 export interface Props {
@@ -23,14 +25,14 @@ export interface Props {
 }
 
 export interface WithMaxItemsProps {
-  items: any[];
+  items: ItemData[];
   maxItems?: number;
   onDragEnd(sourceIndex: number, destinationIndex: number): void;
 }
 
 interface WithMaxItemsState {
   maxItems: number;
-  items: any[];
+  items: ItemData[];
   chunks: Chunk[];
 }
 

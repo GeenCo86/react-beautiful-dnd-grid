@@ -1,7 +1,9 @@
 import React, { ReactElement } from "react";
 import { DragDropContext, Droppable, DroppableProvided, DroppableStateSnapshot, DropResult } from "react-beautiful-dnd";
 import { ListManagerItem } from "./ListManagerItem";
-import hash from "object-hash";
+import hash from 'object-hash';
+
+type ItemData = object | string | number;
 
 interface Location {
   id: string;
@@ -15,14 +17,16 @@ export interface DragAndDropResult {
 
 export interface Chunk {
   id: string;
-  items: any[];
+  items: ItemData[];
 }
 
 export interface Props {
+  className?: string;
   chunks: Chunk[];
   direction: "horizontal" | "vertical";
-  render(item: any): ReactElement<{}>;
+  render(item: ItemData): ReactElement<{}>;
   onDragEnd(result: DragAndDropResult): void;
+  keyExpression?: (item: ItemData) => string;
 }
 
 const horizontalStyle: React.CSSProperties = {
@@ -35,7 +39,9 @@ export const DragAndDropWrapper: React.StatelessComponent<Props> = ({
   onDragEnd,
   chunks,
   direction,
-  render
+  render,
+  keyExpression,
+  className
 }: Props) => {
   return (
     <DragDropContext onDragEnd={mapAndInvoke(onDragEnd)}>
@@ -45,10 +51,11 @@ export const DragAndDropWrapper: React.StatelessComponent<Props> = ({
             <div
               ref={provided.innerRef}
               style={direction === "horizontal" ? horizontalStyle : undefined}
+              className={className}
               {...provided.droppableProps}
             >
-              {items.map((item: any, index: number) => (
-                <ListManagerItem key={hash(item)} item={item} index={index} render={render} />
+              {items.map((item: ItemData, index: number) => (
+                <ListManagerItem key={keyExpression ? keyExpression(item) : hash(item)} item={item} index={index} render={render} />
               ))}
               {provided.placeholder}
             </div>
